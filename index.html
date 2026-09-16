@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zion Prompt A/B Playground</title>
+<meta name="description" content="Compare two prompt variants side-by-side: structure diff, heuristic quality scores, token estimates. Free, runs in your browser. By Zion Tech Group.">
+<style>
+:root{--bg:#0e0d14;--card:#181622;--acc:#a78bfa;--txt:#efeafd;--mut:#a79fc4}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+header{padding:48px 24px 24px;text-align:center;background:linear-gradient(160deg,#2a1d52,#0e0d14)}
+h1{margin:0 0 8px}.wrap{max-width:1100px;margin:0 auto;padding:24px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.cols{grid-template-columns:1fr}}
+textarea{width:100%;min-height:220px;padding:14px;border-radius:12px;border:1px solid #2e2848;background:#12101c;color:var(--txt);font-family:ui-monospace,monospace;font-size:.9rem}
+.panel{background:var(--card);border:1px solid #2a2442;border-radius:14px;padding:16px;margin-top:16px}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th,td{padding:9px 10px;border-bottom:1px solid #241f3a;text-align:left}th:first-child{color:var(--mut)}
+.win td{color:var(--acc);font-weight:600}
+.badge{font-size:.72rem;background:#241d42;color:var(--acc);padding:2px 8px;border-radius:12px;margin-left:8px}
+footer{padding:32px 24px;text-align:center;color:var(--mut);font-size:.85rem;border-top:1px solid #221d38;margin-top:40px}
+footer a{color:var(--acc);text-decoration:none;margin:0 8px}
+</style>
+</head>
+<body>
+<header><h1>⚖️ Zion Prompt A/B Playground</h1>
+<p>Paste two prompt variants. Get heuristic quality scores, token estimates and a structure checklist — then test the winner on your golden set.</p></header>
+<div class="wrap">
+<div class="cols">
+<div><h3>Variant A</h3><textarea id="a" placeholder="You are a support agent. Answer briefly."></textarea></div>
+<div><h3>Variant B</h3><textarea id="b" placeholder="You are a senior support specialist at Acme. Answer in under 120 words, cite the help-center article, and escalate billing disputes to a human."></textarea></div>
+</div>
+<div class="panel"><table id="t"><thead><tr><th>Heuristic</th><th>A</th><th>B</th></tr></thead><tbody></tbody></table>
+<p style="color:var(--mut);font-size:.85rem">Heuristics only — real quality comes from evals. Generate a golden set with the <a style="color:var(--acc)" href="https://ziontechgroup.com/zion-eval-generator/">Eval Generator</a> and track versions in <a style="color:var(--acc)" href="https://ziontechgroup.com/prompt-vault/">Prompt Vault</a>.</p></div>
+</div>
+<footer>Part of the <a href="https://ziontechgroup.com">Zion Tech Group</a> AI apps network ·
+<a href="https://ziontechgroup.com/zion-context-window-planner/">Context Planner</a>
+<a href="https://ziontechgroup.com/zion-model-router/">Model Router</a>
+<a href="https://ziontechgroup.com/zion-sla-cost-calculator/">SLA Cost Calculator</a></footer>
+<script>
+const checks=[
+['Estimated tokens (~chars/4)',s=>Math.ceil(s.length/4)],
+['Has a defined role/persona',s=>/you are|act as/i.test(s)],
+['Specifies output format/length',s=>/format|json|markdown|words|bullet|table|length/i.test(s)],
+['Includes constraints/guardrails',s=>/never|do not|must not|only|escalate|refuse/i.test(s)],
+['Provides context or examples',s=>/example|context:|e\.g\.|for instance/i.test(s)],
+['Defines failure/edge behavior',s=>/if .*(unknown|unsure|not|cannot)|otherwise|fallback/i.test(s)]];
+function score(s){let pts=0;const rows=checks.map(([n,f])=>{const r=f(s);if(typeof r==='boolean')pts+=r?1:0;return[n,typeof r==='boolean'?(r?'✅':'❌'):r.toLocaleString()]});return[rows,pts];}
+function go(){const a=document.getElementById('a').value,b=document.getElementById('b').value;
+const[ra,pa]=score(a),[rb,pb]=score(b);
+document.querySelector('#t tbody').innerHTML=ra.map((r,i)=>{const[rbn,rbv]=rb[i];
+let cls='';if(typeof checks[i][1]('')==='boolean'){const av=r[1]==='✅',bv=rbv==='✅';cls=av&&!bv?' class="win"':(!av&&bv?'':'')}return`<tr${cls}><td>${r[0]}${i>0&&r[1]!==rbv?'<span class="badge">diff</span>':''}</td><td>${r[1]}</td><td>${rbv}</td></tr>`}).join('')+`<tr><td><b>Heuristic score</b></td><td class="${pa>pb?'win':''}"><b>${pa}/5</b></td><td class="${pb>pa?'win':''}"><b>${pb}/5</b></td></tr>`;}
+document.getElementById('a').addEventListener('input',go);document.getElementById('b').addEventListener('input',go);go();
+</script>
+</body>
+</html>
