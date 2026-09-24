@@ -1,7 +1,16 @@
-# Zion Prompt A/B Playground
+# Prompt A/B Playground
 
-Compare two prompt variants side-by-side: token estimates, structure heuristics (role, format, constraints, examples, edge behavior) and a quick score.
+Side-by-side prompt comparison with diff and quality scoring.
 
 **Live app:** https://ziontechgroup.com/zion-prompt-ab-playground/
 
-Part of the [Zion Tech Group](https://ziontechgroup.com) AI apps network. Pairs with [Prompt Vault](https://ziontechgroup.com/prompt-vault/) and [Eval Generator](https://ziontechgroup.com/zion-eval-generator/).
+## Features
+- Dual prompt editor with diff view
+- Quality heuristics scoring
+- Token cost comparison
+
+## Zion App Network
+Part of the [Zion App Network](https://ziontechgroup.com/apps/).
+Related: [AI Prompt Engineer](https://github.com/Zion-support/ai-prompt-engineer) · [Prompt Leak Scanner](https://github.com/Zion-support/zion-prompt-leak-scanner) · [LLM Gateway](https://github.com/Zion-support/llm-gateway) · [Eval Generator](https://github.com/Zion-support/zion-eval-generator)
+
+© 2026 Zion Tech Group
